@@ -22,8 +22,14 @@ class Student
   end
   
   def save
-    sql = "INSERT INTO students (name, grade) VALUES (?, ?)"
-    DB[:conn].execute(sql)
+   if @id
+      sql = "UPDATE students SET name = ? WHERE id = ?"
+      DB.execute(sql, self.name, self.id)
+    else
+      sql = "INSERT INTO students (name) VALUES (?)"
+      DB.execute(sql, self.name)
+      @id = DB.execute("SELECT last_insert_rowid() FROM students")[0][0]
+    end
   end
   
   
